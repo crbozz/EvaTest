@@ -1,0 +1,40 @@
+apply plugin: 'com.android.application'
+
+android {
+    compileSdkVersion 26
+    defaultConfig {
+        applicationId "org.sidia.evatest"
+        minSdkVersion 23
+        targetSdkVersion 23
+        versionCode 1
+        versionName "1.0"
+//        testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+    packagingOptions {
+        exclude 'lib/x86/libgvr.so'
+        pickFirst 'lib/*/libc++_shared.so'
+        pickFirst 'lib/*/libgnustl_shared.so'
+    }
+}
+
+ext.sxrVersion='5.0.1-SNAPSHOT'
+project.ext.daydreamVersion = '1.130.0'
+project.ext.jomlVersion = "1.9.3-SNAPSHOT"
+project.ext.gsonVersion = '2.8.2'
+
+dependencies {
+    implementation "com.google.code.gson:gson:$gsonVersion"
+    implementation "org.joml:joml-android:${jomlVersion}"
+    implementation 'com.android.support:appcompat-v7:27.0.2'
+
+    implementation "com.samsungxr:sxrsdk:$sxrVersion"
+    implementation "com.samsungxr:backend_monoscopic:$sxrVersion"
+
+    implementation 'com.google.protobuf:protobuf-lite:3.0.0'
+}
