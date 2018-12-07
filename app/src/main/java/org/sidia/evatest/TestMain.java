@@ -10,8 +10,7 @@ import com.samsungxr.animation.SXRAnimation;
 import com.samsungxr.animation.SXRAnimator;
 import com.samsungxr.animation.SXRAvatar;
 import com.samsungxr.animation.SXRRepeatMode;
-
-import org.joml.Matrix4f;
+import com.samsungxr.animation.SXRSkeleton;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -30,21 +29,32 @@ public class TestMain extends SXRMain {
         evaAvatar.loadModel(new SXRAndroidResource(sxrContext, "pet_model.dae"));
 
         boneModel = sxrContext.getAssetLoader().loadModel("bone_model.obj");
-        boneModel.getTransform().setPosition(10000f, 0f, 100f);
-        boneModel.getTransform().setScale(20000f, 20000f, 20000f);
+        boneModel.getTransform().setPosition(0f, -5f, 0f);
+        boneModel.getTransform().setScale(150f, 150f, 150f);
     }
 
-    private final static String refName = "m_dnLipEnd_JNT";
+    private final static String refName = "m_upLipEnd_JNT";
     private SXRAvatar.IAvatarEvents avatarEvents = new SXRAvatar.IAvatarEvents() {
         @Override
         public void onAvatarLoaded(SXRAvatar sxrAvatar, SXRNode sxrNode, String s, String s1) {
             evaAvatar.getModel().getTransform().setPosition(0f, 0, -300f);
             getSXRContext().getMainScene().addNode(evaAvatar.getModel());
-            Matrix4f e = evaAvatar.getModel().getTransform().getModelMatrix4f();
-            Log.e("TEST_MAIN", "model mat=" + e);
 
             SXRNode refNode = getSXRContext().getMainScene().getNodeByName(refName);
-            refNode.addChildObject(boneModel);
+            if (refNode != null) {
+                SXRSkeleton skel = evaAvatar.getSkeleton();
+
+                // Must remove first bone from its parent...
+                SXRNode parent = skel.getBone(0).getParent();
+                if (parent != null) {
+                    parent.removeChildObject(skel.getBone(0));
+                }
+
+                // ... And add it as child of the model
+                evaAvatar.getModel().addChildObject(skel.getBone(0));
+                
+                refNode.addChildObject(boneModel);
+            }
 
             try
             {
